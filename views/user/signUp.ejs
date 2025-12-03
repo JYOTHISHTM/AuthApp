@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Signup</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: white;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 12px 20px;
+            width: 86%;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            background: #111;
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .link {
+            margin-top: 10px;
+            display: block;
+            font-size: 14px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Create Account</h2>
+
+        <form id="signupForm">
+            <input type="text" name="name" placeholder="Enter your name" />
+            <input type="email" name="email" placeholder="Enter your email" />
+            <input type="password" name="password" placeholder="Enter your password" />
+            <button type="submit">Register</button>
+        </form>
+
+        <a href="/user/login" class="link">Already have an account? Login</a>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", async function (e) {
+            e.preventDefault(); // stop refresh
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            const res = await fetch("/user/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if (!result.success) {
+                Toastify({
+                    text: result.message,
+                    duration: 1000,
+                    gravity: "top",
+                    position: "center",
+                    close: true,
+                    backgroundColor: "#ff4d4d"
+                }).showToast();
+            } else {
+                Toastify({
+                    text: result.message,
+                    duration: 1000,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#4caf50"
+                }).showToast();
+
+                setTimeout(() => {
+                    window.location.href = "/user/login";
+                }, 1000);
+            }
+        });
+    </script>
+
+</body>
+
+</html>

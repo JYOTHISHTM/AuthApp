@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth | Landing</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: #fafafa;
+            color: #222;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+
+        .navbar .brand {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .navbar a {
+            margin-left: 18px;
+            text-decoration: none;
+            color: #222;
+            font-weight: 500;
+        }
+
+        .navbar a:hover {
+            opacity: 0.7;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            max-width: 700px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .btn-container {
+            margin-top: 30px;
+        }
+
+        a.btn {
+            padding: 12px 28px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            display: inline-block;
+            margin: 8px;
+            transition: 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #111;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.85;
+        }
+
+        .btn-outline {
+            border: 1px solid #111;
+            background: transparent;
+            color: #111;
+        }
+
+        .btn-outline:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 60px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="brand">Auth System</div>
+
+    </div>
+
+    <!-- Hero Content -->
+    <div class="hero">
+        <h1>Secure Authentication Made Simple</h1>
+        <p>
+            A clean, minimal authentication system built with Node.js, Express, MongoDB,
+            and EJS. Fast, lightweight, and easy to use.
+        </p>
+
+        <div class="btn-container">
+            <a href="/user/login" class="btn btn-primary">Login</a>
+            <a href="/user/sign-up" class="btn btn-outline">Create Account</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        © <%= new Date().getFullYear() %> Auth Project. All rights reserved.
+    </footer>
+
+</body>
+
+</html>

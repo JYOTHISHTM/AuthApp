@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: white;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            transition: 0.2s ease-in-out;
+        }
+
+        input:focus {
+            border-color: #111;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        button {
+            padding: 12px;
+            width: 86%;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            background: #111;
+            color: white;
+            font-size: 15px;
+            margin-top: 8px;
+            transition: 0.2s ease-in-out;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h1>Admin Login</h1>
+
+        <form id="adminLoginForm">
+            <input type="email" name="email" placeholder="Email" id="email" required>
+            <input type="password" name="password" placeholder="Password" id="password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('adminLoginForm');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                Toastify({
+                    text: "All fields are required",
+                    duration: 1000,
+                    close: true,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#ff4d4d"
+                }).showToast();
+                return;
+            }
+
+            try {
+                const res = await fetch('/admin/adminLogin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    Toastify({
+                        text: "Login successful!",
+                        duration: 1000,
+                        close: true,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "#4CAF50"
+                    }).showToast();
+
+                    setTimeout(() => {
+                        window.location.href = '/admin/dashboard';
+                    }, 1000);
+
+                } else {
+                    Toastify({
+                        text: data.error,
+                        duration: 1000,
+                        close: true,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "#ff4d4d"
+                    }).showToast();
+                }
+
+            } catch (err) {
+                console.error(err);
+                Toastify({
+                    text: "Server error. Try again.",
+                    duration: 1000,
+                    close: true,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#ff4d4d"
+                }).showToast();
+            }
+        });
+    </script>
+</body>
+
+</html>
