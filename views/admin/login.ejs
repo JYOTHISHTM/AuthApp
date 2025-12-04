@@ -87,8 +87,11 @@
         document.getElementById("adminLoginForm").addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const email = email.value.trim();
-            const password = password.value.trim();
+            const emailEl = document.getElementById("email");
+            const passwordEl = document.getElementById("password");
+
+            const email = emailEl.value.trim();
+            const password = passwordEl.value.trim();
 
             if (!email || !password) {
                 return showToast("All fields are required", "#ff4d4d");

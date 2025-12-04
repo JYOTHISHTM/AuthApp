@@ -2,10 +2,9 @@ const express = require('express')
 const dotenv = require('dotenv')
 const connectDB = require('./config/db')
 const cookieParser = require("cookie-parser")
-const authRoutes = require('./routes/userRoute')
+const userRoutes = require('./routes/userRoutes')
 const adminRoutes = require('./routes/adminRoutes')
 const noCache = require('./middleware/noCache');
-const helmet = require("helmet");
 const morgan = require("morgan");
 
 
@@ -17,7 +16,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
 app.use(noCache)
-app.use(helmet());
 app.use(morgan("dev"));
 
 app.set('view engine', 'ejs')
@@ -25,7 +23,7 @@ app.set('views', './views')
 
 connectDB()
 
-app.use('/user', authRoutes)
+app.use('/user', userRoutes)
 app.use('/admin', adminRoutes)
 
 app.get('/', (req, res) => {

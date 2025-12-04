@@ -2,7 +2,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const MESSAGES = require('../constants/messages');
 const STATUS = require('../constants/statusCodes');
-const { success, error } = require('../utils/response');
+const { sendSuccess, sendError } = require('../utils/response');
 const { isValidEmail } = require('../utils/validators');
 
 exports.adminLogin = async (req, res) => {
@@ -10,18 +10,18 @@ exports.adminLogin = async (req, res) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return error(res, MESSAGES.ALL_FIELDS_REQUIRED);
+            return sendError(res, MESSAGES.ALL_FIELDS_REQUIRED);
         }
 
         if (!isValidEmail(email)) {
-            return error(res, MESSAGES.INVALID_EMAIL);
+            return sendError(res, MESSAGES.INVALID_EMAIL);
         }
 
         if (
             email !== process.env.ADMIN_EMAIL ||
             password !== process.env.ADMIN_PASSWORD
         ) {
-            return error(res, MESSAGES.INVALID_EMAIL_OR_PASSWORD, STATUS.UNAUTHORIZED);
+            return sendError(res, MESSAGES.INVALID_EMAIL_OR_PASSWORD, STATUS.UNAUTHORIZED);
         }
 
         const token = jwt.sign({ admin: true }, process.env.JWT_SECRET, {
@@ -29,10 +29,10 @@ exports.adminLogin = async (req, res) => {
         });
 
         res.cookie("token", token, { httpOnly: true });
-        return success(res, MESSAGES.LOGIN_SUCCESS);
+        return sendSuccess(res, MESSAGES.LOGIN_SUCCESS);
     } catch (err) {
-        console.error(err);
-        return error(res, MESSAGES.SERVER_ERROR, STATUS.SERVER_ERROR);
+        console.sendError(err);
+        return sendError(res, MESSAGES.SERVER_ERROR, STATUS.SERVER_ERROR);
     }
 };
 
