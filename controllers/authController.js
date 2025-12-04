@@ -1,66 +1,40 @@
-
-
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const MESSAGES = require("../constants/messages");
-
 const STATUS = require("../constants/statusCodes");
-
-
+const { isValidEmail } = require("../utils/validators");
+const { sendSuccess, sendError } = require("../utils/response");
 
 exports.register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        // VALIDATIONS
-        if (!name)
-            return res.json({ success: false, message: MESSAGES.NAME_REQUIRED });
+        if (!name) return sendError(res, MESSAGES.NAME_REQUIRED);
+        if (!email) return sendError(res, MESSAGES.EMAIL_REQUIRED);
+        if (!isValidEmail(email)) return sendError(res, MESSAGES.INVALID_EMAIL);
+        if (!password) return sendError(res, MESSAGES.PASSWORD_REQUIRED);
 
-        if (!email)
-            return res.json({ success: false, message: MESSAGES.EMAIL_REQUIRED });
+        if (password.length < 6) return sendError(res, MESSAGES.PASSWORD_MIN_LENGTH);
+        if (!/[A-Z]/.test(password)) return sendError(res, MESSAGES.PASSWORD_UPPERCASE_REQUIRED);
+        if (!/[0-9]/.test(password)) return sendError(res, MESSAGES.PASSWORD_NUMBER_REQUIRED);
+        if (/\s/.test(password)) return sendError(res, MESSAGES.PASSWORD_NO_SPACES);
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return sendError(res, MESSAGES.PASSWORD_SPECIAL_REQUIRED);
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email))
-            return res.json({ success: false, message: MESSAGES.INVALID_EMAIL });
-
-        if (!password)
-            return res.json({ success: false, message: MESSAGES.PASSWORD_REQUIRED });
-
-        if (password.length < 6)
-            return res.json({ success: false, message: "Password must be at least 6 characters" });
-
-        if (!/[A-Z]/.test(password))
-            return res.json({ success: false, message: "Password must contain 1 uppercase letter" });
-
-        if (!/[0-9]/.test(password))
-            return res.json({ success: false, message: "Password must contain 1 number" });
-
-        if (!/[!@#$%^&*(),.?\":{}|<>]/.test(password))
-            return res.json({ success: false, message: "Password must contain 1 special character" });
-
-        if (/\s/.test(password))
-            return res.json({ success: false, message: "Password cannot contain spaces" });
-
-        // USER EXISTS?
         const existing = await User.findOne({ email });
-        if (existing)
-            return res.json({ success: false, message: MESSAGES.USER_EXISTS });
+        if (existing) return sendError(res, MESSAGES.USER_EXISTS, STATUS.CONFLICT);
 
-        // SAVE USER
-        await new User({ name, email, password }).save();
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        return res.json({
-            success: true,
-            message: MESSAGES.REGISTER_SUCCESS
-        });
+        await new User({ name, email, password: hashedPassword }).save();
+
+        return sendSuccess(res, MESSAGES.REGISTER_SUCCESS);
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ success: false, message: "Server error" });
+        console.error(err);
+        return sendError(res, MESSAGES.SERVER_ERROR, STATUS.SERVER_ERROR);
     }
 };
-
-
 
 exports.login = async (req, res) => {
     try {
@@ -69,19 +43,14 @@ exports.login = async (req, res) => {
         email = email?.trim();
         password = password?.trim();
 
-        if (!email)
-            return res.json({ success: false, message: MESSAGES.EMAIL_REQUIRED });
-
-        if (!password)
-            return res.json({ success: false, message: MESSAGES.PASSWORD_REQUIRED });
+        if (!email) return sendError(res, MESSAGES.EMAIL_REQUIRED);
+        if (!password) return sendError(res, MESSAGES.PASSWORD_REQUIRED);
 
         const user = await User.findOne({ email });
+        if (!user) return sendError(res, MESSAGES.USER_NOT_FOUND, STATUS.UNAUTHORIZED);
 
-        if (!user)
-            return res.json({ success: false, message: MESSAGES.USER_NOT_FOUND });
-
-        if (user.password !== password)
-            return res.json({ success: false, message: MESSAGES.WRONG_PASSWORD });
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return sendError(res, MESSAGES.WRONG_PASSWORD, STATUS.UNAUTHORIZED);
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1h",
@@ -89,17 +58,15 @@ exports.login = async (req, res) => {
 
         res.cookie("token", token, { httpOnly: true });
 
-        return res.json({ success: true, message: "Login successful" });
+        return sendSuccess(res, MESSAGES.LOGIN_SUCCESS);
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ success: false, message: "Server Error" });
+        console.error(err);
+        return sendError(res, MESSAGES.SERVER_ERROR, STATUS.SERVER_ERROR);
     }
 };
 
-
-
 exports.logout = async (req, res) => {
-    res.clearCookie("token")
-    return res.redirect('/user/login')
-}
+    res.clearCookie("token");
+    return res.redirect("/user/login");
+};

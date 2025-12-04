@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <style>
         body {
@@ -21,23 +18,17 @@
             padding: 0 20px;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
             background: white;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
 
         th, td {
             padding: 15px;
-            text-align: left;
             border-bottom: 1px solid #eee;
         }
 
@@ -55,56 +46,21 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
-            transition: 0.2s;
         }
 
-        .block-btn {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .block-btn:hover {
-            opacity: 0.85;
-        }
-
-        .unblock-btn {
-            background: #3cbc63;
-            color: white;
-        }
-
-        .unblock-btn:hover {
-            opacity: 0.85;
-        }
-
+        .block-btn { background: #e74c3c; color: white; }
+        .unblock-btn { background: #3cbc63; color: white; }
         .logout-btn {
             margin-top: 40px;
             background: #111;
             color: white;
-            width: 20%;
+            width: 150px;
             padding: 12px;
-        }
-
-        .logout-btn:hover {
-            opacity: 0.85;
-        }
-
-        @media(max-width: 600px) {
-            th, td {
-                padding: 12px;
-                font-size: 14px;
-            }
-
-            button {
-                padding: 6px 10px;
-                font-size: 13px;
-            }
         }
     </style>
 </head>
 
 <body>
-
     <div class="container">
         <h1>Admin Dashboard</h1>
 
@@ -116,32 +72,27 @@
                     <th>Action</th>
                 </tr>
             </thead>
+
             <tbody>
-                <% users.forEach(user => { %>
+                <% users.forEach(u => { %>
                     <tr>
-                        <td><%= user.name %></td>
-                        <td><%= user.email %></td>
+                        <td><%= u.name %></td>
+                        <td><%= u.email %></td>
                         <td>
-                            <% if (!user.isBlocked) { %>
-                                <form action="/admin/block/<%= user._id %>" method="POST">
-                                    <button class="block-btn" type="submit">Block</button>
-                                </form>
-                            <% } else { %>
-                                <form action="/admin/unblock/<%= user._id %>" method="POST">
-                                    <button class="unblock-btn" type="submit">Unblock</button>
-                                </form>
-                            <% } %>
+                            <form action="/admin/<%= u.isBlocked ? 'unblock' : 'block' %>/<%= u._id %>" method="POST">
+                                <button class="<%= u.isBlocked ? 'unblock-btn' : 'block-btn' %>">
+                                    <%= u.isBlocked ? "Unblock" : "Block" %>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 <% }) %>
             </tbody>
         </table>
 
-        <form action="/admin/logout" method="post">
-            <button class="logout-btn" type="submit">Logout</button>
+        <form action="/admin/logout" method="POST">
+            <button class="logout-btn">Logout</button>
         </form>
     </div>
-
 </body>
-
 </html>
