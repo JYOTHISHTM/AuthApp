@@ -50,6 +50,10 @@ AuthApp/
 ├── config/
 │   └── db.js
 │
+├── constants/
+│   └── messages.js
+│   └── statusCodes.js
+│
 ├── controllers/
 │   ├── AdminController.js
 │   └── AuthController.js
@@ -57,13 +61,18 @@ AuthApp/
 ├── middleware/
 │   ├── authMiddleware.js
 │   └── adminMiddleware.js
+│   └── noCache.js
 │
 ├── models/
 │   └── User.js
 │
 ├── routes/
-│   ├── auth.js
-│   └── adminRoutes.js
+│   ├── adminRoutes.js
+│   └── userRoutes.js
+│
+├── utils/
+│   ├── response.js
+│   └── validators.js
 │
 └── views/
     ├── admin/
@@ -81,11 +90,9 @@ AuthApp/
 
 # 1. Clone this repository
 ```
-git clone https://github.com/yourusername/auth-app.git
+git clone https://github.com/yourusername/AuthApp.git
 ```
-```
-cd auth-app
-```
+
 
 # 2. Install dependencies
 ```
@@ -100,7 +107,7 @@ ADMIN_PASSWORD=admin123
 ```
 ## 4. Start the server
 ```
-npm start
+npm run dev
 ```
 
 ## App runs at:
